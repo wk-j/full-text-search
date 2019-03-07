@@ -73,6 +73,20 @@ namespace FullTextSearch {
                 }
             }
 
+
+            if (args.Contains("--like")) {
+                using (var context = new MyContext(options)) {
+                    var data = context.Students
+                        .Where(x =>
+                            EF.Functions.Like(x.Profile1, "%" + keywords + "%") ||
+                            EF.Functions.Like(x.Profile2, "%" + keywords + "%") ||
+                            EF.Functions.Like(x.Profile3, "%" + keywords + "%")
+                        )
+                        .Select(x => x.Name).ToList();
+                    Console.WriteLine(data.Count());
+                }
+            }
+
             /*
             DROP INDEX fts_idx
             CREATE INDEX fts_idx ON public."Students" USING GIN (to_tsvector('english', "Profile1" || ' ' || "Profile2" || ' ' || "Profile3" ))

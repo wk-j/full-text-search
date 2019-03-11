@@ -1,0 +1,8 @@
+
+wk-send-command --database FullTextSearch --file http/Query.sql
+
+//
+wk-send-command --database postgres --file http/Show.sql
+
+//
+wk-send-command --database --command Execute FullTextSearch --file http/Migrate.sql

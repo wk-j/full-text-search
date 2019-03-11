@@ -10,6 +10,7 @@
         <PackageReference Include="Bogus" Version="26.0.1" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
         <PackageReference Include="WaffleGenerator.Bogus" Version="4.0.1" />
+        <PackageReference Include="wk.DynamicTables" Version="19.3.7.1829" />
     </ItemGroup>
 
 </Project>

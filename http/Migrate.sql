@@ -1,0 +1,1 @@
+ALTER TABLE "Students" ALTER "ThaiText" TYPE text COLLATE "C"

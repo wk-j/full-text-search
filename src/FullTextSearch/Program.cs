@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Bogus;
 using WaffleGenerator.Bogus;
+using DynamicTables;
 
 // https://www.npgsql.org/efcore/mapping/full-text-search.html
 
@@ -17,7 +18,7 @@ namespace FullTextSearch {
             return builder.Options;
         }
 
-        static bool Insert() {
+        static bool Insert(int size) {
             var options = CreateOptions();
             var faker =
                 new Faker<Student>()
@@ -38,7 +39,7 @@ namespace FullTextSearch {
             var count = 0;
 
             foreach (var item in Enumerable.Range(0, 10)) {
-                var items = 1000;
+                var items = size;
                 var data = Enumerable.Range(1, items).Select(x => faker.Generate());
                 using (var context = new MyContext(options)) {
                     context.Database.EnsureCreated();
@@ -110,6 +111,26 @@ namespace FullTextSearch {
             return true;
         }
 
+        static bool OrderBy() {
+            var options = CreateOptions();
+            using (var context = new MyContext(options)) {
+                var rs = context.Students.Take(20).Select(x => new {
+                    Name = x.Name,
+                    Text = x.ThaiText
+                }).OrderBy(x => x.Text);
+                DynamicTable.From(rs).Write();
+            }
+            return true;
+        }
+
+        static bool Clear() {
+            var options = CreateOptions();
+            using (var context = new MyContext(options)) {
+                context.Database.EnsureDeleted();
+            }
+            return true;
+        }
+
         static void Main(string[] args) {
             if (args.Length == 0) return;
 
@@ -117,11 +138,14 @@ namespace FullTextSearch {
 
             var rs = args[0] switch
             {
-                "--insert" => Insert(),
+                "--insert-1" => Insert(10),
+                "--insert-2" => Insert(1000),
+                "--clear" => Clear(),
                 "--count" => Count(),
                 "--like" => Like(keywords),
                 "--contains" => Contains(keywords),
                 "--freetext" => FreeText(keywords),
+                "--order" => OrderBy(),
                 _ => true
             };
         }
